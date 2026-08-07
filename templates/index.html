@@ -10,11 +10,12 @@
 
   <header class="topbar">
     <h1>Expense Analyzer</h1>
-    <p class="tagline">Add an expense and it categorizes itself automatically.</p>
+    <p class="tagline">Add an expense and it categorizes, analyzes, and flags issues automatically.</p>
   </header>
 
   <main class="layout">
 
+    <!-- Add Expense -->
     <section class="card">
       <h2>Add Expense</h2>
 
@@ -33,10 +34,67 @@
       </form>
 
       <p class="hint">Category is detected automatically from your description — no need to pick one.</p>
-      <a class="analyze-link" href="/analyze">View Spending Analysis &rarr;</a>
     </section>
 
+    <!-- Overview -->
     <section class="card">
+      <h2>Overview</h2>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Total Spent</span>
+          <span class="stat-value">Rs. {{ "%.2f"|format(total_spent) }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Top Category</span>
+          <span class="stat-value">{{ top_category or "-" }}</span>
+        </div>
+      </div>
+
+      <div class="category-bars">
+        {% for category, amount in totals.items() %}
+        <div class="category-row">
+          <span>{{ category }}</span>
+          <div class="category-bar-track">
+            <div class="category-bar-fill" style="width: {{ (amount / total_spent * 100) if total_spent else 0 }}%"></div>
+          </div>
+          <span>Rs. {{ "%.2f"|format(amount) }}</span>
+        </div>
+        {% else %}
+        <p class="empty">No data yet — add an expense to see the breakdown.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Alerts -->
+    <section class="card wide">
+      <h2>Alerts</h2>
+      <ul class="alerts-list">
+        {% for alert in budget_alerts %}
+          <li>⚠ {{ alert }}</li>
+        {% endfor %}
+        {% for dup in duplicate_alerts %}
+          <li>🔁 {{ dup }}</li>
+        {% endfor %}
+        {% if not budget_alerts and not duplicate_alerts %}
+          <li class="empty">No alerts right now.</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <!-- Savings Suggestions -->
+    <section class="card wide">
+      <h2>Savings Suggestions</h2>
+      <ul class="suggestions-list">
+        {% for tip in suggestions %}
+          <li>{{ tip }}</li>
+        {% else %}
+          <li class="empty">Add some expenses to get suggestions.</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- Transactions -->
+    <section class="card wide">
       <h2>Recent Transactions</h2>
       <table>
         <thead>
