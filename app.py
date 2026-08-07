@@ -9,10 +9,14 @@ EXPENSES_FILE = "expenses.txt"
 # Keywords used to auto-detect a category from the description text.
 # (Unit III - Regex)
 CATEGORY_KEYWORDS = {
-    "Food": ["swiggy", "zomato", "restaurant", "food", "cafe", "pizza"],
-    "Travel": ["uber", "ola", "petrol", "bus", "train", "travel", "fuel"],
-    "Shopping": ["amazon", "flipkart", "shopping", "mall"],
-    "Bills": ["bill", "recharge", "electricity", "rent", "wifi"],
+    "Food": ["swiggy", "zomato", "restaurant", "food", "cafe", "pizza",
+             "lunch", "dinner", "breakfast", "snacks"],
+    "Travel": ["uber", "ola", "petrol", "bus", "train", "travel", "fuel",
+               "flight", "cab", "taxi", "airport"],
+    "Shopping": ["amazon", "flipkart", "shopping", "mall", "myntra"],
+    "Bills": ["bill", "recharge", "electricity", "rent", "wifi",
+              "credit card", "emi", "insurance", "subscription"],
+    "Entertainment": ["netflix", "movie", "spotify", "prime", "game", "cinema"],
 }
 
 # Fixed monthly budget limit per category, used for the budget alert feature.
@@ -21,6 +25,7 @@ BUDGET_LIMITS = {
     "Travel": 1500,
     "Shopping": 2500,
     "Bills": 2000,
+    "Entertainment": 1000,
     "Other": 1500,
 }
 
@@ -152,10 +157,34 @@ def get_savings_suggestions(totals, total_spent):
 
 @app.route("/")
 def home():
+    """
+    Single-page dashboard: the add-expense form, the analysis (insights,
+    alerts, suggestions), and the transaction list all live here, so
+    nothing is hidden behind a second page you have to remember to visit.
+    """
     msg = request.args.get("msg")
     expenses = read_expenses()
     recent = list(reversed(expenses))  # newest first
-    return render_template("index.html", expenses=recent, msg=msg)
+
+    totals = get_category_totals(expenses)
+    total_spent = sum(totals.values())
+    top_category = max(totals, key=totals.get) if totals else None
+
+    budget_alerts = get_budget_alerts(totals)
+    duplicate_alerts = find_duplicates(expenses)
+    suggestions = get_savings_suggestions(totals, total_spent)
+
+    return render_template(
+        "index.html",
+        expenses=recent,
+        msg=msg,
+        totals=totals,
+        total_spent=total_spent,
+        top_category=top_category,
+        budget_alerts=budget_alerts,
+        duplicate_alerts=duplicate_alerts,
+        suggestions=suggestions,
+    )
 
 
 @app.route("/add", methods=["POST"])
@@ -173,28 +202,6 @@ def add():
 
     except ValueError:
         return redirect(url_for("home", msg="Amount must be a number"))
-
-
-@app.route("/analyze")
-def analyze():
-    expenses = read_expenses()
-    totals = get_category_totals(expenses)
-    total_spent = sum(totals.values())
-    top_category = max(totals, key=totals.get) if totals else None
-
-    budget_alerts = get_budget_alerts(totals)
-    duplicate_alerts = find_duplicates(expenses)
-    suggestions = get_savings_suggestions(totals, total_spent)
-
-    return render_template(
-        "analyze.html",
-        total_spent=total_spent,
-        totals=totals,
-        top_category=top_category,
-        budget_alerts=budget_alerts,
-        duplicate_alerts=duplicate_alerts,
-        suggestions=suggestions,
-    )
 
 
 if __name__ == "__main__":
