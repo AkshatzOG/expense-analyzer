@@ -40,12 +40,22 @@ body {
 }
 
 .layout {
-  max-width: 780px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 30px 20px 60px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
+}
+
+.card.wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
