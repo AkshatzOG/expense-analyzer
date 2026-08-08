@@ -73,6 +73,33 @@ body {
   padding-left: 10px;
 }
 
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header-row h2 {
+  margin: 0;
+}
+
+.danger-btn {
+  margin-top: 0;
+  padding: 7px 12px;
+  background: var(--danger-light);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: var(--danger);
+  color: white;
+}
+
 form {
   display: flex;
   flex-direction: column;

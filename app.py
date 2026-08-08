@@ -204,5 +204,13 @@ def add():
         return redirect(url_for("home", msg="Amount must be a number"))
 
 
+@app.route("/clear", methods=["POST"])
+def clear():
+    """Wipes all stored expenses by truncating the text file."""
+    with open(EXPENSES_FILE, "w") as file:
+        file.write("")
+    return redirect(url_for("home", msg="All data cleared"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

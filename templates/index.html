@@ -95,7 +95,12 @@
 
     <!-- Transactions -->
     <section class="card wide">
-      <h2>Recent Transactions</h2>
+      <div class="card-header-row">
+        <h2>Recent Transactions</h2>
+        <form action="/clear" method="post" onsubmit="return confirm('Delete all expense data? This cannot be undone.');">
+          <button type="submit" class="danger-btn">Clear All Data</button>
+        </form>
+      </div>
       <table>
         <thead>
           <tr>
