@@ -113,9 +113,9 @@
           {% if expenses %}
             {% for e in expenses %}
             <tr>
-              <td class="amount">Rs. {{ "%.2f"|format(e.amount) }}</td>
-              <td><span class="tag">{{ e.category }}</span></td>
-              <td>{{ e.description }}</td>
+              <td class="amount">Rs. {{ "%.2f"|format(e[0]) }}</td>
+              <td><span class="tag">{{ e[1] }}</span></td>
+              <td>{{ e[2] }}</td>
             </tr>
             {% endfor %}
           {% else %}
