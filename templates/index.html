@@ -1,131 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expense Analyzer</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 <body>
 
-  <header class="topbar">
-    <h1>Expense Analyzer</h1>
-    <p class="tagline">Add an expense and it categorizes, analyzes, and flags issues automatically.</p>
-  </header>
+    <header class="topbar">
 
-  <main class="layout">
+        <h1>Expense Analyzer</h1>
 
-    <!-- Add Expense -->
-    <section class="card">
-      <h2>Add Expense</h2>
+        <p>
+            Analyze your expenses and get useful spending suggestions.
+        </p>
 
-      {% if msg %}
-        <p class="banner">{{ msg }}</p>
-      {% endif %}
+    </header>
 
-      <form action="/add" method="post">
-        <label for="amount">Amount (Rs.)</label>
-        <input type="number" step="0.01" min="0.01" name="amount" id="amount" placeholder="e.g. 450" required>
 
-        <label for="description">Description</label>
-        <input type="text" name="description" id="description" placeholder="e.g. Swiggy dinner order" required>
+    <main class="layout">
 
-        <button type="submit">Add Expense</button>
-      </form>
 
-      <p class="hint">Category is detected automatically from your description — no need to pick one.</p>
-    </section>
+        <!-- Add Expense -->
 
-    <!-- Overview -->
-    <section class="card">
-      <h2>Overview</h2>
-      <div class="stats">
-        <div class="stat">
-          <span class="stat-label">Total Spent</span>
-          <span class="stat-value">Rs. {{ "%.2f"|format(total_spent) }}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Top Category</span>
-          <span class="stat-value">{{ top_category or "-" }}</span>
-        </div>
-      </div>
+        <section class="card">
 
-      <div class="category-bars">
-        {% for category, amount in totals.items() %}
-        <div class="category-row">
-          <span>{{ category }}</span>
-          <div class="category-bar-track">
-            <div class="category-bar-fill" style="width: {{ (amount / total_spent * 100) if total_spent else 0 }}%"></div>
-          </div>
-          <span>Rs. {{ "%.2f"|format(amount) }}</span>
-        </div>
-        {% else %}
-        <p class="empty">No data yet — add an expense to see the breakdown.</p>
-        {% endfor %}
-      </div>
-    </section>
+            <h2>Add Expense</h2>
 
-    <!-- Alerts -->
-    <section class="card wide">
-      <h2>Alerts</h2>
-      <ul class="alerts-list">
-        {% for alert in budget_alerts %}
-          <li>⚠ {{ alert }}</li>
-        {% endfor %}
-        {% for dup in duplicate_alerts %}
-          <li>🔁 {{ dup }}</li>
-        {% endfor %}
-        {% if not budget_alerts and not duplicate_alerts %}
-          <li class="empty">No alerts right now.</li>
-        {% endif %}
-      </ul>
-    </section>
+            <form action="/add" method="post">
 
-    <!-- Savings Suggestions -->
-    <section class="card wide">
-      <h2>Savings Suggestions</h2>
-      <ul class="suggestions-list">
-        {% for tip in suggestions %}
-          <li>{{ tip }}</li>
-        {% else %}
-          <li class="empty">Add some expenses to get suggestions.</li>
-        {% endfor %}
-      </ul>
-    </section>
+                <label for="amount">
+                    Amount (Rs.)
+                </label>
 
-    <!-- Transactions -->
-    <section class="card wide">
-      <div class="card-header-row">
-        <h2>Recent Transactions</h2>
-        <form action="/clear" method="post" onsubmit="return confirm('Delete all expense data? This cannot be undone.');">
-          <button type="submit" class="danger-btn">Clear All Data</button>
-        </form>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% if expenses %}
-            {% for e in expenses %}
-            <tr>
-              <td class="amount">Rs. {{ "%.2f"|format(e[0]) }}</td>
-              <td><span class="tag">{{ e[1] }}</span></td>
-              <td>{{ e[2] }}</td>
-            </tr>
-            {% endfor %}
-          {% else %}
-            <tr><td colspan="3" class="empty">No expenses added yet.</td></tr>
-          {% endif %}
-        </tbody>
-      </table>
-    </section>
+                <input type="number"
+                       name="amount"
+                       id="amount"
+                       step="0.01"
+                       min="0.01"
+                       placeholder="e.g. 450"
+                       required>
 
-  </main>
+
+                <label for="description">
+                    Description
+                </label>
+
+                <input type="text"
+                       name="description"
+                       id="description"
+                       placeholder="e.g. Swiggy dinner"
+                       required>
+
+
+                <button type="submit">
+                    Add Expense
+                </button>
+
+            </form>
+
+            <p class="hint">
+                The category is automatically detected from the description.
+            </p>
+
+        </section>
+
+
+        <!-- Overview -->
+
+        <section class="card">
+
+            <h2>Overview</h2>
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <span class="stat-label">
+                        Total Spent
+                    </span>
+
+                    <span class="stat-value">
+                        Rs. {{ "%.2f"|format(total) }}
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <span class="stat-label">
+                        Top Category
+                    </span>
+
+                    <span class="stat-value">
+                        {{ top or "-" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <h3>Category Spending</h3>
+
+            {% if totals %}
+
+                {% for category, amount in totals.items() %}
+
+                    <div class="category">
+
+                        <span>
+                            {{ category }}
+                        </span>
+
+                        <span>
+                            Rs. {{ "%.2f"|format(amount) }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty">
+                    No expenses added yet.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Alerts -->
+
+        <section class="card wide">
+
+            <h2>Alerts</h2>
+
+            {% if alerts %}
+
+                <ul class="alerts-list">
+
+                    {% for alert in alerts %}
+
+                        <li>
+                            ⚠ {{ alert }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p class="empty">
+                    No budget alerts.
+                </p>
+
+            {% endif %}
+
+
+            {% if duplicates %}
+
+                <h3>Duplicate Transactions</h3>
+
+                <ul class="alerts-list">
+
+                    {% for expense in duplicates %}
+
+                        <li>
+                            🔁 Possible duplicate:
+                            Rs. {{ "%.2f"|format(expense[0]) }}
+                            - {{ expense[1] }}
+                            - {{ expense[2] }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p class="empty">
+                    No duplicate transactions found.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Savings Suggestions -->
+
+        <section class="card wide">
+
+            <h2>Savings Suggestions</h2>
+
+            <ul class="suggestions-list">
+
+                {% for suggestion in suggestions %}
+
+                    <li>
+                        {{ suggestion }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </section>
+
+
+        <!-- All Expenses -->
+
+        <section class="card wide">
+
+            <div class="card-header-row">
+
+                <h2>All Expenses</h2>
+
+                <form action="/clear"
+                      method="post">
+
+                    <button type="submit"
+                            class="danger-btn">
+
+                        Clear All Data
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            {% if expenses %}
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Amount</th>
+
+                            <th>Category</th>
+
+                            <th>Description</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for e in expenses %}
+
+                            <tr>
+
+                                <td class="amount">
+                                    Rs. {{ "%.2f"|format(e[0]) }}
+                                </td>
+
+                                <td>
+                                    <span class="tag">
+                                        {{ e[1] }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ e[2] }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            {% else %}
+
+                <p class="empty">
+                    No expenses added yet.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+    </main>
 
 </body>
+
 </html>
