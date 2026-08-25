@@ -124,12 +124,16 @@ def analyze(expenses):
 
 
 def find_duplicates(expenses):
+
     duplicates = []
 
     for i in range(len(expenses)):
         for j in range(i + 1, len(expenses)):
 
-            if expenses[i] == expenses[j]:
+            if (expenses[i][0] == expenses[j][0]
+                    and expenses[i][1].lower() == expenses[j][1].lower()
+                    and expenses[i][2].lower() == expenses[j][2].lower()):
+
                 duplicates.append(expenses[i])
 
     return duplicates
