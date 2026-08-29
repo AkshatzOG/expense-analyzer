@@ -4,8 +4,8 @@ app = Flask(__name__)
 
 FILE = "expenses.txt"
 
-food = ["food", "swiggy", "zomato", "pizza", "restaurant"]
-travel = ["uber", "ola", "bus", "train", "petrol"]
+food = ["food", "swiggy", "zomato", "pizza", "restaurant","blinkit"]
+travel = ["uber", "ola", "bus", "train", "petrol","flight","rickshaw"]
 shopping = ["amazon", "flipkart", "myntra", "mall", "shopping"]
 bills = ["bill", "electricity", "rent", "wifi", "recharge"]
 entertainment = ["movie", "netflix", "spotify", "game"]
