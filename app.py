@@ -19,12 +19,20 @@ def settings(): return render_template('settings.html', page='settings')
 @app.post('/api/analyze')
 def api_analyze():
     data = request.get_json(silent=True) or {}
-    try: return jsonify(analyze_expenses(data.get('expenses', []), data.get('budgets', {})))
-    except Exception as exc: return jsonify({'error': str(exc)}), 400
+    try:
+        return jsonify(analyze_expenses(
+            data.get('expenses', []),
+            data.get('budgets', {}),
+            data.get('startDate'),
+            data.get('endDate')
+        ))
+    except Exception as exc:
+        return jsonify({'error': str(exc)}), 400
 
 @app.post('/api/categorize')
 def api_categorize():
     data = request.get_json(silent=True) or {}
     return jsonify({'category': categorize_description(str(data.get('description', '')) )})
 
-if __name__ == '__main__': app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

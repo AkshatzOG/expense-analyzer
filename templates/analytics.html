@@ -1,1 +1,41 @@
-{% extends 'base.html' %}{% block title %}Analytics — Expense Analyzer V5{% endblock %}{% block crumb %}Analytics{% endblock %}{% block content %}<section class="page-heading"><div><p class="eyebrow">ANALYTICS</p><h1>See the patterns.</h1><p class="muted">A compact financial view across cash flow, categories and behavior.</p></div></section><section class="metric-grid"><article class="metric-card"><span>Expenses</span><strong id="aTotal">₹0</strong><small id="aCount">0</small></article><article class="metric-card"><span>Income</span><strong id="aIncome">₹0</strong><small>all recorded income</small></article><article class="metric-card"><span>Top category</span><strong id="aTop">—</strong><small>by expense amount</small></article><article class="metric-card"><span>Budget left</span><strong id="aRemaining">₹0</strong><small>available category room</small></article></section><section class="dashboard-grid"><article class="panel chart-panel"><div class="panel-head"><h2>Daily spending</h2></div><div class="chart-wrap"><canvas id="analyticsDaily"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><h2>Category spending</h2></div><div class="chart-wrap"><canvas id="analyticsCategory"></canvas></div></article></section><section class="dashboard-grid"><article class="panel chart-panel"><div class="panel-head"><h2>Monthly spending</h2></div><div class="chart-wrap"><canvas id="analyticsMonthly"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><h2>Weekday behavior</h2></div><div class="chart-wrap"><canvas id="analyticsWeekday"></canvas></div></article></section>{% endblock %}{% block scripts %}<script>window.EA.analytics();</script>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Analytics — Expense Analyzer V5{% endblock %}
+{% block crumb %}Analytics{% endblock %}
+{% block content %}
+<section class="page-heading analytics-heading">
+  <div><p class="eyebrow">V5.2 • FINANCIAL ANALYTICS</p><h1>See where the money moves.</h1><p class="muted">Compare periods, measure cash flow and uncover spending behavior from your ledger.</p></div>
+  <div class="period-controls">
+    <label>Period<select id="analyticsPeriod"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="all">All time</option><option value="custom">Custom range</option></select></label>
+    <div id="customDates" class="custom-dates hidden"><label>From<input id="analyticsStart" type="date"></label><label>To<input id="analyticsEnd" type="date"></label><button class="secondary-button" id="applyRange" type="button">Apply</button></div>
+  </div>
+</section>
+<section class="metric-grid">
+  <article class="metric-card"><span>Period expenses</span><strong id="aTotal">₹0</strong><small id="aExpenseMeta">0 expense transactions</small></article>
+  <article class="metric-card featured"><span>Net cash flow</span><strong id="aNet">₹0</strong><small id="aNetMeta">Income − expenses</small></article>
+  <article class="metric-card"><span>Spending velocity</span><strong id="aVelocity">₹0</strong><small>average expense per day</small></article>
+  <article class="metric-card"><span>Period change</span><strong id="aChange">—</strong><small id="aChangeMeta">vs previous period</small></article>
+</section>
+<section class="comparison-strip">
+  <div><span>Income</span><strong id="aIncome">₹0</strong></div>
+  <div><span>Average transaction</span><strong id="aAverage">₹0</strong></div>
+  <div><span>Projected period spend</span><strong id="aProjected">₹0</strong></div>
+  <div><span>Savings rate</span><strong id="aSavings">0%</strong></div>
+</section>
+<section class="dashboard-grid">
+  <article class="panel chart-panel"><div class="panel-head"><div><h2>Daily cash movement</h2><p class="muted">Expense outflow versus income inflow.</p></div></div><div class="chart-wrap tall"><canvas id="cashflowChart"></canvas></div></article>
+  <article class="panel chart-panel"><div class="panel-head"><div><h2>Category mix</h2><p class="muted">Current-period expense allocation.</p></div></div><div class="donut-wrap"><canvas id="analyticsCategory"></canvas></div><div id="analyticsCategoryLegend" class="legend-list"></div></article>
+</section>
+<section class="dashboard-grid">
+  <article class="panel chart-panel"><div class="panel-head"><div><h2>Monthly comparison</h2><p class="muted">Expense trend by month inside the selected range.</p></div></div><div class="chart-wrap"><canvas id="analyticsMonthly"></canvas></div></article>
+  <article class="panel chart-panel"><div class="panel-head"><div><h2>Weekday behavior</h2><p class="muted">Which days carry the most expense outflow.</p></div></div><div class="chart-wrap"><canvas id="analyticsWeekday"></canvas></div></article>
+</section>
+<section class="two-column">
+  <article class="panel"><div class="panel-head"><div><h2>Category trends</h2><p class="muted">Current period versus the previous comparable period.</p></div></div><div id="categoryTrends" class="trend-list"></div></article>
+  <article class="panel"><div class="panel-head"><div><h2>Payment methods</h2><p class="muted">How expense outflow was paid.</p></div></div><div id="paymentBreakdown" class="stack-list"></div></article>
+</section>
+<section class="two-column">
+  <article class="panel"><div class="panel-head"><div><h2>Merchant concentration</h2><p class="muted">Top merchants or descriptions by expense value.</p></div></div><div id="merchantBreakdown" class="stack-list"></div></article>
+  <article class="panel"><div class="panel-head"><div><h2>Recurring signals</h2><p class="muted">Transactions marked recurring plus repeated merchant patterns.</p></div></div><div id="recurringBreakdown" class="stack-list"></div></article>
+</section>
+{% endblock %}
+{% block scripts %}<script>window.EA.analytics();</script>{% endblock %}

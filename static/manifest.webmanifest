@@ -1,1 +1,9 @@
-{"name":"Expense Analyzer V5","short_name":"Expense Analyzer","start_url":"/","display":"standalone","background_color":"#f6f7fb","theme_color":"#111827","description":"Local-first personal finance intelligence workspace","icons":[]}
+{
+  "name": "Expense Analyzer V5.2",
+  "short_name": "Expense Analyzer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#111827",
+  "description": "Local-first personal finance intelligence dashboard"
+}
